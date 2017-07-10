@@ -1,78 +1,89 @@
 <?php
-	require_once 'dbconfig/config.php';
-
+	session_start();
+	require_once('dbconfig/config.php');
+	//phpinfo();
 ?>
-
 <!DOCTYPE html>
 <html>
 <head>
-	<title></title>
-	<link rel="stylesheet" type="text/css" href="assets/css/style.css">
+<title>Sign Up Page</title>
+<link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body>
-
+<body style="background-color:#bdc3c7">
 	<div id="main-wrapper">
-		<h2>Registration form</h2>
-		<img src="assets/images/user.jpg" class="avatar">
-
-		<form action="register.php" method="post" class="myForm">
-		<label>Username: </label>
-		<input type="text" name="username" class="inputvalues" required="">
-
-		<label>Password: </label>
-		<input type="text" name="password" class="inputvalues" required="">
-
-		<label>Confirm password: </label>
-		<input type="text" name="cpassword" class="inputvalues" required="">
-
-		<input type="submit" id="signup_btn" name="submit_btn" value="Sing up">
-		<input type="button" id="back_btn" name="back_btn" value="<< Back">
-	</form>
-
-	<?php 
-		if (isset($_POST['submit_btn'])) 
-		{
-			echo '<script type="text/javascript"> alert("Sign up button clicked!")</script>';
-
-			$username = $_POST['username'];
-			$password = $_POST['password'];
-			$cpassword = $_POST['cpassword'];
-
-			if($password == $cpassword) 
-			{
-				$query = "SELECT * FROM users WHERE username = '$username'";
-				$query_run = mysqli_query($con, $query);
-
+	<center><h2>Sign Up Form</h2></center>
+		<form action="register.php" method="post">
+			<div class="imgcontainer">
+				<img src="assets/images/avatar.png" alt="Avatar" class="avatar">
+			</div>
+			<div class="inner_container">
+				<label><b>Username</b></label>
+				<input type="text" placeholder="Enter Username" name="username" required>
+				<label><b>Password</b></label>
+				<input type="password" placeholder="Enter Password" name="password" required>
+				<label><b>Confirm Password</b></label>
+				<input type="password" placeholder="Enter Password" name="cpassword" required>
+				<button name="register" class="sign_up_btn" type="submit">Sign Up</button>
 				
-				if (mysqli_num_rows($query_run)>0) 
+				<a href="index.php"><button type="button" class="back_btn"><< Back to Login</button></a>
+			</div>
+		</form>
+		
+		<?php
+			if(isset($_POST['register']))
+			{
+				@$username=$_POST['username'];
+				@$password=$_POST['password'];
+				@$cpassword=$_POST['cpassword'];
+				@$role=$_POST['role'];
+
+				$role = 1;
+				
+				if($password==$cpassword)
 				{
-					//there is already a user with the same username
-
-					echo '<script type="text/javascript"> alert("User already exist. Try another username!")</script>';
-				}
-
-				{
-					$query = "INSERT INTO users VALUES ('$username', '$password')";
-					$query_run = mysqli_query($con, $query);
-
-					if ($query_run) 
+					$query = "select * from acounts where username='$username'";
+					//echo $query;
+				$query_run = mysqli_query($con,$query);
+				//echo mysql_num_rows($query_run);
+				if($query_run)
 					{
-						echo '<script> alert("User Registered!")</script>';
+						if(mysqli_num_rows($query_run)>0)
+						{
+							echo '<script type="text/javascript">alert("This Username Already exists.. Please try another username!")</script>';
+						}
+						else
+						{
+							$query = "insert into acounts values('','$username','$password', '$role')";
+							echo $query;
+							$query_run = mysqli_query($con,$query);
+							if($query_run)
+							{
+								echo '<script type="text/javascript">alert("User Registered.. Welcome")</script>';
+								$_SESSION['username'] = $username;
+								$_SESSION['password'] = $password;
+								header( "Location: homepage.php");
+							}
+							else
+							{
+								echo '<p class="bg-danger msg-block">Registration Unsuccessful due to server error. Please try later</p>';
+							}
+						}
 					}
-					
+					else
+					{
+						echo '<script type="text/javascript">alert("DB error")</script>';
+					}
+				}
+				else
+				{
+					echo '<script type="text/javascript">alert("Password and Confirm Password do not match")</script>';
 				}
 				
-
-				
 			}
-			else 
+			else
 			{
-				echo '<script> alert("Password does not match!")</script>';
 			}
-		}
-	?>
-
+		?>
 	</div>
-
 </body>
 </html>

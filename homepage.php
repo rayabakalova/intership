@@ -1,26 +1,27 @@
 <?php
-
-
+	session_start();
+	require_once('dbconfig/config.php');
+	//phpinfo();
 ?>
-
 <!DOCTYPE html>
 <html>
 <head>
-	<title></title>
-	<link rel="stylesheet" type="text/css" href="assets/css/style.css">
+<title>Home Page</title>
+<link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
-
 	<div id="main-wrapper">
-		<h2>Home page</h2>
-		<h3>Welcome user</h3>
-		<img src="images/user.jpg" class="avatar">
-
-		<form action="homepage.php" method="post" class="myForm">
+		<center><h2>Home Page</h2></center>
+		<center><h3>Welcome <?php echo $_SESSION['username']; ?></h3></center>
 		
-		<input type="button" id="logout_btn" name="" value="Log out">
-	</form>
+		<form action="index.php" method="post">
+			<div class="imgcontainer">
+				<img src="assets/images/avatar.png" alt="Avatar" class="avatar">
+			</div>
+			<div class="inner_container">
+				<button class="logout_button" type="submit">Log Out</button>	
+			</div>
+		</form>
 	</div>
-
 </body>
 </html>
