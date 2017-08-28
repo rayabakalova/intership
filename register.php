@@ -1,89 +1,67 @@
-<?php
-	session_start();
-	require_once('dbconfig/config.php');
-	//phpinfo();
-?>
-<!DOCTYPE html>
-<html>
-<head>
-<title>Sign Up Page</title>
-<link rel="stylesheet" href="assets/css/style.css">
-</head>
+<?php require_once 'include/head.php';?>
 <body style="background-color:#bdc3c7">
 	<div id="main-wrapper">
-	<center><h2>Sign Up Form</h2></center>
+	<center><h2>Регистрация</h2></center>
+	<div class="imgcontainer col-md-12 text-center">
+			<img src="assets/images/avatar.png" alt="Avatar" class="avatar col-md-4 col-md-offset-4	" width="100%">
+		</div>
+		<div class="clearfix"></div>
+	
+		<?php			
+			if(isset($_POST['register'])) {
+				if(empty($_POST['username']) || empty($_POST['password']) || empty($_POST['cpassword'])) {
+					echo 'Моля, попълнете всички полета!';
+				} else {
+					userExists($_POST['username']);
+					if(!userExists($_POST['username'])) {
+						echo '<div class="alert alert-danger text-center">
+			                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+			                    ×</button>
+			               <span class="glyphicon glyphicon-remove"></span>
+			                <hr class="message-inner-separator">
+			                <p>
+			                    Съществува потребител с тези данни!Моля, въведете различно потребителско име!</p>
+			            </div>';
+					} else {
+						newUser($_POST['username'], $_POST['password']);
+						header('Refresh: 3; url=index.php');
+						echo '<div class="alert alert-success text-center">
+				                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+				                    ×</button>
+				               <span class="glyphicon glyphicon-ok"></span>
+				                <hr class="message-inner-separator">
+				                <p>
+				                    Успешна регистрация!</p>
+				            </div>';
+					}
+					
+
+				}
+			}
+		?>
 		<form action="register.php" method="post">
-			<div class="imgcontainer">
-				<img src="assets/images/avatar.png" alt="Avatar" class="avatar">
-			</div>
+			
 			<div class="inner_container">
-				<label><b>Username</b></label>
-				<input type="text" placeholder="Enter Username" name="username" required>
-				<label><b>Password</b></label>
-				<input type="password" placeholder="Enter Password" name="password" required>
-				<label><b>Confirm Password</b></label>
-				<input type="password" placeholder="Enter Password" name="cpassword" required>
-				<button name="register" class="sign_up_btn" type="submit">Sign Up</button>
-				
-				<a href="index.php"><button type="button" class="back_btn"><< Back to Login</button></a>
+				<div class="form-group">
+					<label><b>Потребителско име:</b></label>
+					<input type="text" placeholder="Въведете потребителско име" name="username" class="form-control" required>
+				</div>
+				<div class="form-group">
+					<label><b>Парола:</b></label>
+					<input type="password" placeholder="Въведете парола" name="password" class="form-control" required>
+				</div>
+				<div class="form-group">
+					<label><b>Повторете паролата:</b></label>
+					<input type="password" placeholder="Повторете паролата" name="cpassword" class="form-control" required>
+				</div>
+				<div class="form-group">
+					<button name="register" class="sign_up_btn" type="submit">Регистрация</button>				
+					<a href="index.php"><button type="button" class="back_btn"><< Назад</button></a>
+				</div>
 			</div>
 		</form>
 		
-		<?php
-			if(isset($_POST['register']))
-			{
-				@$username=$_POST['username'];
-				@$password=$_POST['password'];
-				@$cpassword=$_POST['cpassword'];
-				@$role=$_POST['role'];
-
-				$role = 1;
-				
-				if($password==$cpassword)
-				{
-					$query = "select * from acounts where username='$username'";
-					//echo $query;
-				$query_run = mysqli_query($con,$query);
-				//echo mysql_num_rows($query_run);
-				if($query_run)
-					{
-						if(mysqli_num_rows($query_run)>0)
-						{
-							echo '<script type="text/javascript">alert("This Username Already exists.. Please try another username!")</script>';
-						}
-						else
-						{
-							$query = "insert into acounts values('','$username','$password', '$role')";
-							echo $query;
-							$query_run = mysqli_query($con,$query);
-							if($query_run)
-							{
-								echo '<script type="text/javascript">alert("User Registered.. Welcome")</script>';
-								$_SESSION['username'] = $username;
-								$_SESSION['password'] = $password;
-								header( "Location: homepage.php");
-							}
-							else
-							{
-								echo '<p class="bg-danger msg-block">Registration Unsuccessful due to server error. Please try later</p>';
-							}
-						}
-					}
-					else
-					{
-						echo '<script type="text/javascript">alert("DB error")</script>';
-					}
-				}
-				else
-				{
-					echo '<script type="text/javascript">alert("Password and Confirm Password do not match")</script>';
-				}
-				
-			}
-			else
-			{
-			}
-		?>
+		
 	</div>
-</body>
-</html>
+<?php require_once 'include/footer.php'; ?>
+<?php require_once 'include/bottom-js.php';?>
